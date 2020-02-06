@@ -1,0 +1,21 @@
+{
+  "name": "tiny-roguelike",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc && browserify ./dist/client/index.js -o ./public/game.js",
+    "test": "tsc && node ./dist/test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nrkn/tiny-roguelike.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nrkn/tiny-roguelike/issues"
+  },
+  "homepage": "https://github.com/nrkn/tiny-roguelike#readme"
+}
