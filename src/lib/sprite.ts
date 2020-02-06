@@ -1,12 +1,11 @@
 import { Sprite, Rgb } from './types'
-import { arrayGridGet } from './grid/array'
-import { strideGridSet } from './grid/stride'
+import { gridGet } from './grid'
 
 export const compositeColor = ( sprites: Sprite[], x: number, y: number ) => {
   for( let i = 0; i < sprites.length; i++ ){
     const { bitmap, color } = sprites[ i ]
 
-    if ( arrayGridGet( bitmap, x, y ) ) return color
+    if ( gridGet( bitmap, x, y ) ) return color
   }
 }
 export const drawSprites = (
@@ -24,11 +23,17 @@ export const drawSprites = (
 
       if( viewX >= width ) continue
 
+      const index = viewY * width + viewX
+      const destIndex = index * 4
+
       const [ r, g, b ] = (
         compositeColor( sprites, spriteX, spriteY ) || background
       )
 
-      strideGridSet( imageData, viewX, viewY, [ r, g, b, 255 ], 4 )
+      imageData.data[ destIndex ] = r
+      imageData.data[ destIndex + 1 ] = g
+      imageData.data[ destIndex + 2 ] = b
+      imageData.data[ destIndex + 3 ] = 255
     }
   }
 }

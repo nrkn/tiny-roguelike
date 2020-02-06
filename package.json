@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/nrkn/tiny-roguelike/issues"
   },
-  "homepage": "https://github.com/nrkn/tiny-roguelike#readme"
+  "homepage": "https://github.com/nrkn/tiny-roguelike#readme",
+  "devDependencies": {
+    "@types/node": "^13.7.0"
+  }
 }

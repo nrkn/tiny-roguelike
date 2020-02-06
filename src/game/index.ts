@@ -1,4 +1,4 @@
-import { Action, Sprite, Rgb } from '../lib/types'
+import { Direction, Sprite, Rgb } from '../lib/types'
 
 import {
   viewWidth, viewHeight, floorId, centerRow, centerCol, viewRows, viewCols,
@@ -7,11 +7,6 @@ import {
 
 import { createLevel } from './map'
 
-import {
-  sparseGridGet, sparseGridKeys, sparseGridDelete, sparseGridSet
-} from '../lib/grid/sparse'
-
-import { arrayGridGet } from '../lib/grid/array'
 import { randomDirection } from '../lib/geometry/direction'
 import { translate, scale } from '../lib/geometry/point'
 
@@ -21,12 +16,17 @@ import {
 
 import { drawSprites } from '../lib/sprite'
 import { pointInRect } from '../lib/geometry/rect'
+import { gridGet, gridKeys, gridDelete, gridSet, gridGetBoundingRect } from '../lib/grid'
 
 export const createGame = () => {
   const imageData = new ImageData( viewWidth, viewHeight )
 
   let level = createLevel( 10 )
-  const { x: px, y: py } = level.map.start
+
+  const points = gridKeys( level.map )
+  const mapBounds = gridGetBoundingRect( level.map )
+
+  const { x: px, y: py } = points[ 1 ]
 
   const player = {
     x: px,
@@ -36,7 +36,7 @@ export const createGame = () => {
     health: 12
   }
 
-  const action = ( action: Action ) => {
+  const action = ( action: Direction ) => {
     const newPoint = move( action, player.x, player.y )
 
     if ( newPoint ) {
@@ -52,10 +52,6 @@ export const createGame = () => {
       scale( { x: centerCol, y: centerRow }, { x: -1, y: -1 } )
     )
 
-    const mapRect = {
-      x: 0, y: 0, width: level.map.grid.width, height: level.map.grid.height
-    }
-
     for ( let vy = 0; vy < viewRows; vy++ ) {
       const dy = vy * tileHeight
       const my = mapOffset.y + vy
@@ -68,18 +64,17 @@ export const createGame = () => {
 
         let background: Rgb = [ 0, 0, 255 ]
 
-        if ( !pointInRect( mapRect, { x: mx, y: my } ) ) {
+        if ( !pointInRect( mapBounds, { x: mx, y: my } ) ) {
           drawSprites( imageData, sprites, dx, dy, background )
 
           continue
         }
 
-
         if ( vx === centerCol && vy === centerRow ) {
           sprites.push( playerSprite )
         }
 
-        const monster = sparseGridGet( level.monsters, mx, my )
+        const monster = gridGet( level.monsters, mx, my )
 
         if ( monster ) {
           if ( monster.id === ghostId ) {
@@ -91,7 +86,7 @@ export const createGame = () => {
           }
         }
 
-        const mapTile = arrayGridGet( level.map.grid, mx, my )
+        const mapTile = gridGet( level.map, mx, my )
 
         if( mapTile ){
           background = [ 255, 255, 255 ]
@@ -113,16 +108,11 @@ export const createGame = () => {
     return imageData
   }
 
-  const move = ( action: Action, x: number, y: number ) => {
+  const move = ( action: Direction, x: number, y: number ) => {
     if ( action === 'up' ) y--
     if ( action === 'down' ) y++
     if ( action === 'left' ) x--
     if ( action === 'right' ) x++
-
-    if ( x < 0 ) return
-    if ( y < 0 ) return
-    if ( x >= level.map.grid.width ) return
-    if ( y >= level.map.grid.height ) return
 
     if ( canMove( x, y ) ) return { x, y }
   }
@@ -131,13 +121,13 @@ export const createGame = () => {
     isFloor( x, y ) && !isMonster( x, y )
 
   const isFloor = ( x: number, y: number ) =>
-    arrayGridGet( level.map.grid, x, y ) === floorId
+    gridGet( level.map, x, y ) === floorId
 
   const isMonster = ( x: number, y: number ) =>
-    sparseGridGet( level.monsters, x, y ) !== undefined
+    gridGet( level.monsters, x, y ) !== undefined
 
   const tick = () => {
-    const monsterPoints = sparseGridKeys( level.monsters )
+    const monsterPoints = gridKeys( level.monsters )
 
     monsterPoints.forEach( ( { x, y } ) => {
       const newPoint = move( randomDirection(), x, y )
@@ -146,7 +136,7 @@ export const createGame = () => {
 
       const { x: nx, y: ny } = newPoint
 
-      const monster = sparseGridGet( level.monsters, x, y )
+      const monster = gridGet( level.monsters, x, y )
 
       if ( nx === player.x && ny === player.y ) {
         //attack
@@ -154,8 +144,8 @@ export const createGame = () => {
         return
       }
 
-      sparseGridDelete( level.monsters, x, y )
-      sparseGridSet( level.monsters, nx, ny, monster )
+      gridDelete( level.monsters, x, y )
+      gridSet( level.monsters, nx, ny, monster )
     } )
   }
 

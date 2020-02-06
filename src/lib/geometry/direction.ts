@@ -1,5 +1,5 @@
 import { pick } from '../util/random'
-import { Action } from '../types'
+import { Direction } from '../types'
 
 export const directionModifiers = {
   up: { x: 0, y: -1 },
@@ -8,6 +8,6 @@ export const directionModifiers = {
   right: { x: 1, y: 0 }
 }
 
-const directions: Action[] = [ 'up', 'down', 'left', 'right' ]
+export const directions: Direction[] = [ 'up', 'down', 'left', 'right' ]
 
 export const randomDirection = () => pick( directions )
