@@ -1,6 +1,6 @@
 import { StringPointData } from './types'
-import { Point, BoundingRect } from '../../geometry/types'
-import { emptyBoundingRect } from '../../geometry/rect'
+import { Point, BoundingRect } from '../geometry/types'
+import { emptyBoundingRect } from '../geometry/rect'
 
 export const del = ( data: StringPointData<any>, x: number, y: number ) => {
   const key = x + ',' + y
