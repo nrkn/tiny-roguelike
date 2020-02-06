@@ -33,7 +33,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.tileWidth = 8;
 exports.tileHeight = 8;
 exports.viewCols = 64;
-exports.viewRows = 32;
+exports.viewRows = 36;
 exports.centerCol = Math.floor(exports.viewCols / 2);
 exports.centerRow = Math.floor(exports.viewRows / 2);
 exports.viewWidth = exports.tileWidth * exports.viewCols;
@@ -139,7 +139,7 @@ const sprite_1 = require("../lib/sprite");
 const rect_1 = require("../lib/geometry/rect");
 exports.createGame = () => {
     const imageData = new ImageData(consts_1.viewWidth, consts_1.viewHeight);
-    let level = map_1.createLevel(1);
+    let level = map_1.createLevel(10);
     const { x: px, y: py } = level.map.start;
     const player = {
         x: px,

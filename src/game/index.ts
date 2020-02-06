@@ -25,7 +25,7 @@ import { pointInRect } from '../lib/geometry/rect'
 export const createGame = () => {
   const imageData = new ImageData( viewWidth, viewHeight )
 
-  let level = createLevel( 1 )
+  let level = createLevel( 10 )
   const { x: px, y: py } = level.map.start
 
   const player = {
