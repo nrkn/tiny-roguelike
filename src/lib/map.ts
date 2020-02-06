@@ -1,17 +1,14 @@
-import { SparseMap } from './types'
 import { randomDirection, directionModifiers } from './geometry/direction'
-import { SparseGridData } from './grid/sparse/types'
-import { sparseGridSet, sparseGridGet } from './grid/sparse'
+import { GridData } from './grid/types'
+import { gridSet, gridGet } from './grid'
 
 export const createTunnels = ( numTiles: number ) => {
-  const data: SparseGridData<number> = {}
+  const grid: GridData<number> = {}
 
   let x = 0
   let y = 0
 
-  sparseGridSet( data, x, y, 1 )
-
-  const start = { x, y }
+  gridSet( grid, x, y, 1 )
 
   let tileCount = 1
 
@@ -22,16 +19,12 @@ export const createTunnels = ( numTiles: number ) => {
     x += modifier.x
     y += modifier.y
 
-    if( sparseGridGet( data, x, y ) !== 1 ){
-      sparseGridSet( data, x, y, 1 )
+    if ( gridGet( grid, x, y ) !== 1 ) {
+      gridSet( grid, x, y, 1 )
 
       tileCount++
     }
   }
 
-  const end = { x, y }
-
-  const tileMap: SparseMap = { data, start, end }
-
-  return tileMap
+  return grid
 }

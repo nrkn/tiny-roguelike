@@ -1,24 +1,26 @@
-import { StringPointData } from './types'
+import { GridData } from './types'
 import { Point, BoundingRect } from '../geometry/types'
 import { emptyBoundingRect } from '../geometry/rect'
 
-export const del = ( data: StringPointData<any>, x: number, y: number ) => {
+export const gridDelete = (
+  data: GridData<any>, x: number, y: number
+) => {
   const key = x + ',' + y
 
   if( !(key in data) ) return false
-  
+
   delete data[ key ]
 
   return true
 }
 
-export const get = <T>( 
-  data: StringPointData<T>, x: number, y: number 
+export const gridGet = <T>(
+  data: GridData<T>, x: number, y: number
 ): T | undefined =>
   data[ x + ',' + y ]
 
-export const set = <T>(
-  data: StringPointData<T>, x: number, y: number, value: T
+export const gridSet = <T>(
+  data: GridData<T>, x: number, y: number, value: T
 ) => {
   data[ x + ',' + y ] = value
 
@@ -27,10 +29,10 @@ export const set = <T>(
 
 export const Stop = Symbol( 'Stop' )
 
-export const each = <T>(
-  data: StringPointData<T>, 
-  cb: ( 
-    value: T, x: number, y: number, i: number, data: StringPointData<T> 
+export const gridForEach = <T>(
+  data: GridData<T>,
+  cb: (
+    value: T, x: number, y: number, i: number, data: GridData<T>
   ) => any
 ) => {
   const keys = Object.keys( data )
@@ -46,7 +48,7 @@ export const each = <T>(
   }
 }
 
-export const keys = ( data: StringPointData<any> ) => {  
+export const gridKeys = ( data: GridData<any> ) => {
   const keys = Object.keys( data )
   const points = new Array<Point>( keys.length )
 
@@ -54,22 +56,22 @@ export const keys = ( data: StringPointData<any> ) => {
     const [ x, y ] = keys[ i ].split( ',' ).map( Number )
 
     points[ i ] = { x, y }
-  }  
+  }
 
   return points
 }
 
-export const values = <T>( data: StringPointData<T> ) => {
+export const gridValues = <T>( data: GridData<T> ) => {
   const keys = Object.keys( data )
   const values = new Array<T>( keys.length )
 
-  for( let i = 0; i < keys.length; i++ ) 
+  for( let i = 0; i < keys.length; i++ )
     values[ i ] = data[ keys[ i ] ]
 
-  return values  
+  return values
 }
 
-export const entries = <T>( data: StringPointData<T> ) => {  
+export const gridEntries = <T>( data: GridData<T> ) => {
   const keys = Object.keys( data )
   const entries = new Array<[ Point, T]>()
 
@@ -83,9 +85,9 @@ export const entries = <T>( data: StringPointData<T> ) => {
   return entries
 }
 
-export const getEntry = <T>( 
-  data: StringPointData<T>, i: number 
-): [ Point, T ] | undefined => { 
+export const gridEntry = <T>(
+  data: GridData<T>, i: number
+): [ Point, T ] | undefined => {
   const keys = Object.keys( data )
   const key = keys[ i ]
 
@@ -93,12 +95,13 @@ export const getEntry = <T>(
 
   const [ x, y ] = key.split( ',' ).map( Number )
 
-  return [ { x, y }, data[ key ] ]  
+  return [ { x, y }, data[ key ] ]
 }
 
-export const size = ( data: StringPointData<any> ) => Object.keys( data ).length
+export const gridSize = ( data: GridData<any> ) =>
+  Object.keys( data ).length
 
-export const getBoundingRect = ( data: StringPointData<any> ) => {
+export const gridGetBoundingRect = ( data: GridData<any> ) => {
   const keys = Object.keys( data )
 
   if( keys.length === 0 ) return emptyBoundingRect()
@@ -115,13 +118,13 @@ export const getBoundingRect = ( data: StringPointData<any> ) => {
     if( x > right ) right = x
     if( y < top ) top = y
     if( y > bottom ) bottom = y
-  }    
+  }
 
   const width = (right - left) + 1
   const height = (bottom - top) + 1
 
-  const rect: BoundingRect = { 
-    left, right, top, bottom, x: left, y: top, width, height 
+  const rect: BoundingRect = {
+    left, right, top, bottom, x: left, y: top, width, height
   }
 
   return rect

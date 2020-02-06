@@ -1,7 +1,7 @@
 import { createTunnels } from '../lib/map'
-import { logValues, logSparseMap, logGameMap } from './log'
-import { sparseGridBoundingRect, sparseGridKeys } from '../lib/grid/sparse'
+import { logValues, logGrid } from './log'
 import { createLevel } from '../game/map'
+import { gridGetBoundingRect } from '../lib/grid'
 
 const playerValues = [
   '00000000',
@@ -31,25 +31,19 @@ const tunnels = createTunnels( 100 )
 
 console.log( tunnels )
 
-const bounds = sparseGridBoundingRect( tunnels.data )
+const bounds = gridGetBoundingRect( tunnels )
 
 console.log( bounds )
 
-logSparseMap( tunnels )
+logGrid( tunnels )
 
 console.log(
-  sparseGridBoundingRect( {} )
+  gridGetBoundingRect( {} )
 )
 
-const level = createLevel( 2 )
+const start = process.hrtime()
+const level = createLevel( 10 )
+const end = process.hrtime( start )
 
-console.log( level )
-
-logGameMap( level.map )
-
-const { start, end, data } = tunnels
-
-const keys = sparseGridKeys( data )
-
-console.log( start, end, keys.length )
-console.log( JSON.stringify( keys ) )
+logGrid( level.map )
+console.log( end )

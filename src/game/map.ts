@@ -1,60 +1,52 @@
-import { Level, GameMap, Monster } from '../lib/types'
+import { Level, Monster } from '../lib/types'
 import { stairsUpId, stairsDownId, ghostId, devilId, floorId } from './consts'
-
-import {
-  sparseGridBoundingRect, sparseGridForEach, sparseGridGet, sparseGridSet
-} from '../lib/grid/sparse'
-
 import { createTunnels } from '../lib/map'
-import { translate, scale } from '../lib/geometry/point'
-import { createArrayGrid, arrayGridSet, arrayGridGet } from '../lib/grid/array'
-import { createSequence } from '../lib/util/array'
 import { pick, randInt, clt } from '../lib/util/random'
-import { ArrayGrid } from '../lib/grid/array/types'
-import { SparseGridData } from '../lib/grid/sparse/types'
+import { gridGetBoundingRect, gridSet, gridGet, gridKeys } from '../lib/grid'
+import { GridData } from '../lib/grid/types'
+import { BoundingRect, Point } from '../lib/geometry/types'
 
 export const createLevel = ( currentLevel: number ) => {
   const monsterCount = currentLevel * 5
   const mapSize = currentLevel * 100
 
-  const tunnels = createTunnels( mapSize )
-  const bounds = sparseGridBoundingRect( tunnels.data )
+  const map = createTunnels( mapSize )
+  const bounds = gridGetBoundingRect( map )
+  const points = gridKeys( map )
 
-  const { width, height } = bounds
-  const translateBy = scale( bounds, { x: -1, y: -1 } )
-  const start = translate( tunnels.start, translateBy )
-  const end = translate( tunnels.end, translateBy )
+  const start = points[ 0 ]
+  const player = points[ 1 ]
+  const end = points[ points.length - 1 ]
 
-  const grid = createArrayGrid<number>(
-    width, height, createSequence( width * height, () => 0 )
-  )
+  ensureWalkable( map, player.x, player.y )
+  gridSet( map, start.x, start.y, stairsUpId )
+  gridSet( map, end.x, end.y, stairsDownId )
 
-  sparseGridForEach( tunnels.data, ( value, x, y ) => {
-    const dest = translate( { x, y }, translateBy )
-
-    if( value === 1 ) value = floorId
-
-    arrayGridSet( grid, dest.x, dest.y, value )
-  } )
-
-  arrayGridSet( grid, start.x, start.y, stairsUpId )
-  arrayGridSet( grid, end.x, end.y, stairsDownId )
-
-  const map: GameMap = { grid, start, end }
-  const monsters = createMonsters( monsterCount, grid )
+  const monsters = createMonsters( monsterCount, map, bounds, player )
 
   const level: Level = { map, monsters }
 
   return level
 }
 
-const createMonsters = ( count: number, grid: ArrayGrid<number> ) => {
-  const { width, height } = grid
-  const monsters: SparseGridData<Monster> = {}
+const ensureWalkable = ( grid: GridData<number>, x: number, y: number ) => {
+  for( let dy = -1; dy < 2; dy++ ){
+    for( let dx = -1; dx < 2; dx++ ){
+      gridSet( grid, dx + x, dy + y, floorId )
+    }
+  }
+}
+
+const createMonsters = (
+  count: number, map: GridData<number>, bounds: BoundingRect, playerStart: Point
+) => {
+  const { x, y, width, height } = bounds
+  const monsters: GridData<Monster> = {}
 
   const canPlace = ( x: number, y: number ) => {
-    if( arrayGridGet( grid, x, y ) !== floorId ) return false
-    if( sparseGridGet( grid, x, y ) ) return false
+    if( x === playerStart.x && y === playerStart.y ) return false
+    if ( gridGet( map, x, y ) !== floorId ) return false
+    if ( gridGet( monsters, x, y ) ) return false
 
     return true
   }
@@ -62,15 +54,15 @@ const createMonsters = ( count: number, grid: ArrayGrid<number> ) => {
   for ( let i = 0; i < count; i++ ) {
     const monster = randomMonster()
 
-    let x = randInt( width )
-    let y = randInt( height )
+    let mx = randInt( width ) + x
+    let my = randInt( height ) + y
 
-    while ( !canPlace( x, y ) ) {
-      x = randInt( width )
-      y = randInt( height )
+    while ( !canPlace( mx, my ) ) {
+      mx = randInt( width ) + x
+      my = randInt( height ) + y
     }
 
-    sparseGridSet( monsters, x, y, monster )
+    gridSet( monsters, mx, my, monster )
   }
 
   return monsters

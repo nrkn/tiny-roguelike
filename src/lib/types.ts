@@ -1,39 +1,27 @@
-import { ArrayGrid } from './grid/array/types'
-import { Bit } from './grid/bitmap/types'
-import { SparseGridData } from './grid/sparse/types'
 import { Point } from './geometry/types'
+import { GridData, Bit } from './grid/types'
 
 export type Game = {
   draw: ( timestamp: number ) => ImageData
   action: ActionHandler
 }
 
-export type Action = 'up' | 'down' | 'left' | 'right'
+export type Direction = 'up' | 'down' | 'left' | 'right'
+
+export type Action = Direction
 
 export type ActionHandler = ( action: Action ) => void
 
 export type Rgb = [ number, number, number ]
 
 export type Sprite = {
-  bitmap: ArrayGrid<Bit>
+  bitmap: GridData<Bit>
   color: Rgb
 }
 
-export type SparseMap = {
-  data: SparseGridData<number>
-  start: Point
-  end: Point
-}
-
-export type GameMap = {
-  grid: ArrayGrid<number>
-  start: Point
-  end: Point
-}
-
 export type Level = {
-  map: GameMap
-  monsters: SparseGridData<Monster>
+  map: GridData<number>
+  monsters: GridData<Monster>
 }
 
 export type Mob = {
