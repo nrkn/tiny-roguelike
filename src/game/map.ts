@@ -19,7 +19,11 @@ export const createLevel = ( currentLevel: number ) => {
   const end = points[ points.length - 1 ]
 
   ensureWalkable( map, player.x, player.y )
-  gridSet( map, start.x, start.y, stairsUpId )
+
+  if( currentLevel > 1 ){
+    gridSet( map, start.x, start.y, stairsUpId )
+  }
+
   gridSet( map, end.x, end.y, stairsDownId )
 
   const monsters = createMonsters( monsterCount, map, bounds, player )
