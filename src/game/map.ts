@@ -1,10 +1,10 @@
-import { Level, Monster } from '../lib/types'
 import { stairsUpId, stairsDownId, ghostId, devilId, floorId } from './consts'
-import { createTunnels } from '../lib/map'
+import { createTunnels } from '../lib/map/tunnel'
 import { pick, randInt, clt } from '../lib/util/random'
 import { gridGetBoundingRect, gridSet, gridGet, gridKeys } from '../lib/grid'
 import { GridData } from '../lib/grid/types'
 import { BoundingRect, Point } from '../lib/geometry/types'
+import { Level, Monster } from './types'
 
 export const createLevel = ( currentLevel: number ) => {
   const monsterCount = currentLevel * 5

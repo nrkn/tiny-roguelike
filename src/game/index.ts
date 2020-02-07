@@ -5,6 +5,10 @@ import {
   tileHeight, tileWidth, ghostId, devilId, stairsDownId, stairsUpId
 } from './consts'
 
+import {
+  gridGet, gridKeys, gridDelete, gridSet, gridGetBoundingRect
+} from '../lib/grid'
+
 import { createLevel } from './map'
 
 import { randomDirection } from '../lib/geometry/direction'
@@ -16,7 +20,6 @@ import {
 
 import { drawSprites } from '../lib/sprite'
 import { pointInRect } from '../lib/geometry/rect'
-import { gridGet, gridKeys, gridDelete, gridSet, gridGetBoundingRect } from '../lib/grid'
 
 export const createGame = () => {
   const imageData = new ImageData( viewWidth, viewHeight )

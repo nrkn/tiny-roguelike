@@ -1,4 +1,4 @@
-import { clt } from './util/random'
+import { clt } from '../lib/util/random'
 
 export const fight = ( attack: number, defense: number ) => {
   const attackStrength = clt( attack )

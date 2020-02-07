@@ -104,7 +104,6 @@ exports.stairsDownBitmap = bitmap_1.createBitmap([
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const bitmaps_1 = require("./bitmaps");
-const consts_1 = require("../consts");
 exports.playerSprite = {
     bitmap: bitmaps_1.playerBitmap,
     color: [0, 0, 0]
@@ -119,21 +118,14 @@ exports.devilSprite = {
 };
 exports.stairsDownSprite = {
     bitmap: bitmaps_1.stairsDownBitmap,
-    color: [255, 255, 255],
-    background: [0, 0, 128]
+    color: [255, 255, 255]
 };
 exports.stairsUpSprite = {
     bitmap: bitmaps_1.stairsUpBitmap,
     color: [64, 64, 255]
 };
-exports.spriteMap = {
-    [consts_1.stairsDownId]: exports.stairsDownSprite,
-    [consts_1.stairsUpId]: exports.stairsUpSprite,
-    [consts_1.ghostId]: exports.ghostSprite,
-    [consts_1.devilId]: exports.devilSprite
-};
 
-},{"../consts":2,"./bitmaps":3}],5:[function(require,module,exports){
+},{"./bitmaps":3}],5:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const consts_1 = require("./consts");
@@ -164,15 +156,6 @@ exports.createGame = () => {
         }
         tick();
     };
-    const layers = [
-        {
-            grid: level.monsters
-        },
-        {
-            grid: level.map,
-            background: [255, 255, 255]
-        }
-    ];
     const draw = (timestamp) => {
         const mapOffset = point_1.translate(player, point_1.scale({ x: consts_1.centerCol, y: consts_1.centerRow }, { x: -1, y: -1 }));
         for (let vy = 0; vy < consts_1.viewRows; vy++) {
@@ -190,33 +173,24 @@ exports.createGame = () => {
                 if (vx === consts_1.centerCol && vy === consts_1.centerRow) {
                     sprites.push(sprites_1.playerSprite);
                 }
-                // const monster = gridGet( level.monsters, mx, my )
-                // if ( monster ) {
-                //   if ( monster.id === ghostId ) {
-                //     sprites.push( ghostSprite )
-                //   }
-                //   if( monster.id === devilId ){
-                //     sprites.push( devilSprite )
-                //   }
-                // }
-                // const mapTile = gridGet( level.map, mx, my )
-                // if( mapTile ){
-                //   background = [ 255, 255, 255 ]
-                //   if ( mapTile === stairsDownId ) {
-                //     background = [ 0, 0, 128 ]
-                //     sprites.push( stairsDownSprite )
-                //   }
-                //   if ( mapTile === stairsUpId ) {
-                //     sprites.push( stairsUpSprite )
-                //   }
-                // }
-                for (let i = 0; i < layers.length; i++) {
-                    const layer = layers[i];
-                    const value = grid_1.gridGet(layer.grid, mx, my);
-                    if (value) {
-                        const sprite = sprites_1.spriteMap[value];
-                        background = sprite.background || layer.background || background;
-                        sprites.push(sprite);
+                const monster = grid_1.gridGet(level.monsters, mx, my);
+                if (monster) {
+                    if (monster.id === consts_1.ghostId) {
+                        sprites.push(sprites_1.ghostSprite);
+                    }
+                    if (monster.id === consts_1.devilId) {
+                        sprites.push(sprites_1.devilSprite);
+                    }
+                }
+                const mapTile = grid_1.gridGet(level.map, mx, my);
+                if (mapTile) {
+                    background = [255, 255, 255];
+                    if (mapTile === consts_1.stairsDownId) {
+                        background = [0, 0, 128];
+                        sprites.push(sprites_1.stairsDownSprite);
+                    }
+                    if (mapTile === consts_1.stairsUpId) {
+                        sprites.push(sprites_1.stairsUpSprite);
                     }
                 }
                 sprite_1.drawSprites(imageData, sprites, dx, dy, background);
@@ -341,7 +315,6 @@ const randomMonster = () => {
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const random_1 = require("../util/random");
-const point_1 = require("./point");
 exports.directionModifiers = {
     up: { x: 0, y: -1 },
     down: { x: 0, y: 1 },
@@ -350,9 +323,8 @@ exports.directionModifiers = {
 };
 exports.directions = ['up', 'down', 'left', 'right'];
 exports.randomDirection = () => random_1.pick(exports.directions);
-exports.movePoint = (direction, x, y) => point_1.translate({ x, y }, exports.directionModifiers[direction]);
 
-},{"../util/random":14,"./point":8}],8:[function(require,module,exports){
+},{"../util/random":14}],8:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const direction_1 = require("./direction");

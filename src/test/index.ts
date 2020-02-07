@@ -1,4 +1,4 @@
-import { createTunnels } from '../lib/map'
+import { createTunnels } from '../lib/map/tunnel'
 import { logValues, logGrid } from './log'
 import { createLevel } from '../game/map'
 import { gridGetBoundingRect } from '../lib/grid'
@@ -41,9 +41,12 @@ console.log(
   gridGetBoundingRect( {} )
 )
 
-const start = process.hrtime()
 const level = createLevel( 10 )
-const end = process.hrtime( start )
 
 logGrid( level.map )
+
+const start = process.hrtime()
+createLevel( 100 )
+const end = process.hrtime( start )
+
 console.log( end )

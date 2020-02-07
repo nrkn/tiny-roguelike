@@ -1,6 +1,6 @@
-import { randomDirection, directionModifiers } from './geometry/direction'
-import { GridData } from './grid/types'
-import { gridSet, gridGet } from './grid'
+import { randomDirection, directionModifiers } from '../geometry/direction'
+import { GridData } from '../grid/types'
+import { gridSet, gridGet } from '../grid'
 
 export const createTunnels = ( numTiles: number ) => {
   const grid: GridData<number> = {}
@@ -19,11 +19,10 @@ export const createTunnels = ( numTiles: number ) => {
     x += modifier.x
     y += modifier.y
 
-    if ( gridGet( grid, x, y ) !== 1 ) {
-      gridSet( grid, x, y, 1 )
+    if ( gridGet( grid, x, y ) === 1 ) continue
 
-      tileCount++
-    }
+    gridSet( grid, x, y, 1 )
+    tileCount++
   }
 
   return grid

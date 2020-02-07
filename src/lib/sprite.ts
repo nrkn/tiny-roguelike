@@ -8,6 +8,7 @@ export const compositeColor = ( sprites: Sprite[], x: number, y: number ) => {
     if ( gridGet( bitmap, x, y ) ) return color
   }
 }
+
 export const drawSprites = (
   imageData: ImageData, sprites: Sprite[], x: number, y: number, background: Rgb
 ) => {
