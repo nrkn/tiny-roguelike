@@ -17,12 +17,12 @@ export const drawSprites = (
   for ( let spriteY = 0; spriteY < 8; spriteY++ ) {
     const viewY = y + spriteY
 
-    if( viewY >= height ) continue
+    if( viewY >= height || viewY < 0 ) continue
 
     for ( let spriteX = 0; spriteX < 8; spriteX++ ) {
       const viewX = x + spriteX
 
-      if( viewX >= width ) continue
+      if( viewX >= width || viewX < 0 ) continue
 
       const index = viewY * width + viewX
       const destIndex = index * 4

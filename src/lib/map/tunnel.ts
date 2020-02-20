@@ -22,6 +22,7 @@ export const createTunnels = ( numTiles: number ) => {
     if ( gridGet( grid, x, y ) === 1 ) continue
 
     gridSet( grid, x, y, 1 )
+
     tileCount++
   }
 
